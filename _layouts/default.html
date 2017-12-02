@@ -5,9 +5,11 @@
 
 <!-- hack iOS CSS :active style -->
 <body ontouchstart="">
-
+	
     {% include nav.html %}
-
+	<canvas style="position: absolute;" id="nokey" width="100%" height="100%">
+            Your Browser Don't Support Canvas, Please Download Chrome ^_^``
+    </canvas>
     {{ content }}
 
     {% include footer.html %}
