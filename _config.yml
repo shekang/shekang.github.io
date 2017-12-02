@@ -13,16 +13,16 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the tesmplates via {{ site.myvariable }}.
-title: Kerwin.she-blog
+title: 佘康的博客
 email: m18290048583@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Write an awesome description for your new site here. You can edit this
   line in _config.yml. It will appear in your document head meta (for
   Google search results) and in your feed.xml site description.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: jekyllrb
-github_username:  jekyll
+baseurl: "/blog" # the subpath of your site, e.g. /blog
+url: "http://shekang.me/" # the base hostname & protocol for your site, e.g. http://example.com
+twitter_username: shekang
+github_username:  shekang
 
 # Build settings
 markdown: kramdown
