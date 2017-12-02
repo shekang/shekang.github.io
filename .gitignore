@@ -1,3 +1,13 @@
+<<<<<<< HEAD
 _site
 .sass-cache
 .jekyll-metadata
+=======
+.DS_Store
+Thumbs.db
+db.json
+*.log
+node_modules/
+public/
+.deploy*/
+>>>>>>> 9bfac375970ebdaa3a13021bd5fa4a6c12145bf6
