@@ -1,0 +1,34 @@
+---
+layout:     post
+title:      "JS中的__proto__、prototype、constructor"
+subtitle:   " \"困惑了好久,今天梳理下\""
+date:       2017-12-08 5:44:45
+author:     "Kerwin She"
+header-img: "img/post-bg-js-version.jpg"
+tags:
+    - javascript
+---
+
+在JS里，万物皆对象。方法（Function）是对象，方法的原型(Function.prototype)是对象。因此，它们都会具有对象共有的特点。
+
+ ![proto&prototyp](http://images0.cnblogs.com/blog2015/683809/201508/201728184569708.jpg)
+
+## __ proto __
+在js中所有对象都拥有属性**__proto__**，可称为**隐式原型**,**一个对象的隐式原型指向构造该对象的构造函数的原型，这也保证了实例能够访问在构造函数原型中定义的属性和方法**
+
+## prototype
+——原型属性（prototype）是**方法（Function）对象特有的！**
+——原型属性（prototype）是**方法（Function）对象特有的！**
+——原型属性（prototype）是**方法（Function）对象特有的！**
+这个属性是一个指针，指向一个对象，这个对象的用途就是包含所有实例共享的属性和方法（我们把这个对象叫做原型对象）。原型对象也有一个属性，叫做constructor，这个属性包含了一个指针，指回原构造函数。
+## 总结：
+* 对象有属性__proto__,指向该对象的**构造函数的原型对象**。
+* 方法除了有属性__proto__,还有属性**prototype**，**prototype**指向该**方法的原型对象**。
+
+proto : **实例对象**获取**原型对象**的
+prototype:** 构造函数(所有函数)**特有的获取**原型对象**
+constructor:**原型对象**中指向**构造函数**的
+
+原型对象作为实例对象通过proto属性取得的原型对象最终都是Object.prototype
+所有函数作为实例对象通过proto属性取得的原型对象最终都是Function.prototype
+Function.prototype作为实例对象通过proto属性取得的原型对象最终都是Object.prototype

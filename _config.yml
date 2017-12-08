@@ -33,7 +33,7 @@ anchorjs: true                          # if you want to customize anchor. check
 # Gems
 # from PR#40, to support local preview for Jekyll 3.0
 gems: [jekyll-paginate]
-
+port: 8666 #端口号
 
 
 # Markdown settings
@@ -75,26 +75,26 @@ sidebar-avatar: /img/avatar.jpeg      # use absolute URL, seeing it's used in bo
 
 # Featured Tags
 featured-tags: true                     # whether or not using Feature-Tags
-featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
+featured-condition-size: 1              # 设置文章类型超过多少篇时在首页上显示
 
 
 
 # Friends
-friends: [
-    {
-        title: "KerwinShe",
-        href: "http://shekang.me"
-    },{
-        title: "Foo",
-        href: "#"
-    },{
-        title: "Bar",
-        href: "#"
-    },{
-        title: "Example Friends",
-        href: "#"
-    },{
-        title: "It helps SEO",
-        href: "#"
-    }
-]
+# friends: [
+#     {
+#         title: "KerwinShe",
+#         href: "http://shekang.me"
+#     },{
+#         title: "Foo",
+#         href: "#"
+#     },{
+#         title: "Bar",
+#         href: "#"
+#     },{
+#         title: "Example Friends",
+#         href: "#"
+#     },{
+#         title: "It helps SEO",
+#         href: "#"
+#     }
+# ]
