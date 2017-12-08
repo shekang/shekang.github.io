@@ -54,7 +54,7 @@ layout: default
                 {% if site.duoshuo_share && site.duoshuo_username %}
                 <!-- 多说 Share start -->
                 </style>
-                <div class="ds-share"
+                <!-- <div class="ds-share"
                     style="text-align: right"
                     data-thread-key="{{page.id}}"
                     data-title="{{page.title}}"
@@ -72,7 +72,7 @@ layout: default
                       </div>
                     </div>
                 <hr>
-                </div>
+                </div> -->
                 <!-- 多说 Share end-->
                 {% endif %}
 
@@ -154,6 +154,18 @@ layout: default
 {% if site.duoshuo_username %}
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+    id: 'disqus_thread', // 可选。默认为 location.href
+    owner: 'b3b87219dac0179932f5e194ecb72524707279d3',
+    repo: '存储评论的 repo',
+    oauth: {
+      client_id: 'b36afd2e39e37f7c8364',
+      client_secret: '53f793bb775814f5cb1102be15c872a3e1283c86',
+    },
+    })
+    gitment.render('container')
+</script>
 <!-- 多说公共JS代码 end -->
 {% endif %}
 
