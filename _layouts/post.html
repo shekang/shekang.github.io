@@ -50,9 +50,7 @@ layout: default
 				{{ content }}
 
                 <hr>
-                <div class="comment">
-                    <div id="disqus_thread" class="disqus-thread"></div>
-                </div>
+
 
 
 
@@ -68,6 +66,9 @@ layout: default
                     </li>
                     {% endif %}
                 </ul>
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
 
 
 
@@ -112,22 +113,22 @@ layout: default
     </div>
 </article>
 
-{% if site.duoshuo_username %}
-<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+{% if site.owner %}
+<!--  -->
 <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
 <script>
     var gitment = new Gitment({
     // id: 'disqus_thread', // 可选。默认为 location.href
-    owner: 'shekang',
-    repo: 'blog_comment',
+    owner: '{{site.owner}}',
+    repo: '{{site.blog_comment}}',
     oauth: {
-      client_id: 'b36afd2e39e37f7c8364',
-      client_secret: '53f793bb775814f5cb1102be15c872a3e1283c86',
+      client_id: '{{site.client_id}}',
+      client_secret: '{{site.client_secret}}',
     },
     })
     gitment.render('disqus_thread')
 </script>
-<!-- 多说公共JS代码 end -->
+<!--  end -->
 {% endif %}
 
 

@@ -11,7 +11,7 @@ baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
 
 
 # SNS settings
-RSS: false
+RSS: true
 weibo_username:     shekang
 zhihu_username:     shekang
 github_username:    shekang
@@ -46,23 +46,17 @@ kramdown:
 
 
 
-# Disqus settings
-#disqus_username: _your_disqus_short_name_
+# gitment评论设置
+owner: shekang
+repo: blog_comment
+client_id: b36afd2e39e37f7c8364
+client_secret: 53f793bb775814f5cb1102be15c872a3e1283c86
 
-# Duoshuo settings
-duoshuo_username: huxblog
-# Share component is depend on Comment so we can NOT use share only.
-duoshuo_share: true                     # set to false if you want to use Comment without Sharing
-
-
-
-
-# Analytics settings
-# Baidu Analytics
-ba_track_id: 4cc1f2d8f3067386cc5cdb626a202900
+# Baidu 统计
+ba_track_id: e257f330db0577a464201aecbeb35bb8
 # Google Analytics
-ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
-ga_domain: shekang.me
+# ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
+# ga_domain: shekang.me
 
 
 
