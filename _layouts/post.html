@@ -28,6 +28,7 @@ layout: default
                     {% endcomment %}
                     {% comment %} if page.subtitle {% endcomment %}
                     <h2 class="subheading">{{ page.subtitle }}</h2>
+                    <div>字数: <span id="postLength" class="value">123123</span>&nbsp;&nbsp;&nbsp;阅读数: <span>3,2323次</span></div>
                     {% comment %} endif {% endcomment %}
                     <span class="meta">Posted by {% if page.author %}{{ page.author }}{% else %}{{ site.title }}{% endif %} on {{ page.date | date: "%B %-d, %Y" }}</span>
                 </div>
@@ -116,6 +117,7 @@ layout: default
 {% if site.owner %}
 <!--  -->
 <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script src="http://cdn1.lncld.net/static/js/3.4.2/av-min.js"></script>
 <script>
     var gitment = new Gitment({
     // id: 'disqus_thread', // 可选。默认为 location.href
@@ -130,6 +132,30 @@ layout: default
 </script>
 <!--  end -->
 {% endif %}
+<!-- 字数和阅读量统计 -->
+<script>
+  (function(window){
+      var postLength = document.getElementsByClassName('post-container')[0].outerText.length
+      var postLengthValue =  document.getElementById('postLength')
+      var APP_ID = 'q8KLlCqYSAGihdpfaXiSfjqW-gzGzoHsz';
+      var APP_KEY = 'RRaGMncFL64rziP35jFeSFeY';
+      postLengthValue.innerHTML =postLength
+      AV.init({
+        appId: APP_ID,
+        appKey: APP_KEY
+      });
+      var Counter = AV.Object.extend('Counter');
+      var testObject = new Counter();
+      testObject.save({
+        value: 'Hello World!'
+      }).then(function(object) {
+        alert('LeanCloud Rocks!');
+      })
+
+
+
+  })()
+</script>
 
 
 {% if site.disqus_username %}
