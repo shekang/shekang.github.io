@@ -156,6 +156,14 @@ layout: default
           updateValue(results[0].attributes.value,results[0].id)
           console.log(total+',objectId:'+rowId)
         }else{  //不存在则新建相应的记录写入postId
+            //因为表建立后的每条记录都默认不能没有写的权限的
+            // 新建一个 ACL 实例
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setWriteAccess(true);
+
+            // 将 ACL 实例赋予 Post 对象
+            count.setACL(acl);
             // 声明类型 （会返回对应表的构造函数）
             var Counter = AV.Object.extend('Counter');
             // 实例化对象
