@@ -149,14 +149,12 @@ layout: default
         appKey: APP_KEY,
       });
       AV.User.logIn('shekang', '123mutouren').then(function (loginedUser) {
-        console.log(loginedUser)
         var query = new AV.Query('Counter');
         var total=0,rowId  //当前文章总访问量和对应的记录ID
         query.contains('postId',pageId)   //设置query查询参数
         query.find().then(function(results) {//查询包含pageId的记录是否存在
           if(results.length){  //文章已存在
             updateValue(results[0].attributes.value,results[0].id)
-            console.log(total+',objectId:'+rowId)
           }else{  //不存在则新建相应的记录写入postId
             //因为表建立后的每条记录都默认不能没有写的权限的
             // 新建一个 ACL 实例
@@ -174,6 +172,7 @@ layout: default
             count.set('postId',pageId);
             count.set('value',0);
             count.save().then(function (countData) {
+              console.log(countData)
               updateValue(countData.attributes.value,countData.id)
             })
           }
