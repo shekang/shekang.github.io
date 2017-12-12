@@ -140,7 +140,6 @@ layout: default
       var postLengthValue =  document.getElementById('postLength')
       var APP_ID = 'q8KLlCqYSAGihdpfaXiSfjqW-gzGzoHsz';
       var APP_KEY = 'ySMMLx2lIPRSsOpuCYXpbqxh';
-      var MasterKey = 'RRaGMncFL64rziP35jFeSFeY';
       var pageId  = '{{page.id}}' //jekyll 提供的页面唯一ID
       postLengthValue.innerHTML =postLength
 
@@ -148,22 +147,22 @@ layout: default
       AV.init({
         appId: APP_ID,
         appKey: APP_KEY,
-        masterKey:MasterKey
       });
-      login()
-      var query = new AV.Query('Counter');
-      var total=0,rowId  //当前文章总访问量和对应的记录ID
-      query.contains('postId',pageId)   //设置query查询参数
-      query.find().then(function(results) {//查询包含pageId的记录是否存在
-        debugger
-        if(results.length){  //文章已存在
-          updateValue(results[0].attributes.value,results[0].id)
-          console.log(total+',objectId:'+rowId)
-        }else{  //不存在则新建相应的记录写入postId
+      AV.User.logIn('shekang', '123mutouren').then(function (loginedUser) {
+        console.log(loginedUser)
+        var query = new AV.Query('Counter');
+        var total=0,rowId  //当前文章总访问量和对应的记录ID
+        query.contains('postId',pageId)   //设置query查询参数
+        query.find().then(function(results) {//查询包含pageId的记录是否存在
+          debugger
+          if(results.length){  //文章已存在
+            updateValue(results[0].attributes.value,results[0].id)
+            console.log(total+',objectId:'+rowId)
+          }else{  //不存在则新建相应的记录写入postId
             //因为表建立后的每条记录都默认不能没有写的权限的
             // 新建一个 ACL 实例
             var acl = new AV.ACL();
-            acl.setPublicWriteAccess(true);
+            acl.setWriteAccess(AV.User.current(),true);
             // // 将 ACL 实例赋予 Post 对象
             // count.setACL(acl);
             // 声明类型 （会返回对应表的构造函数）
@@ -177,9 +176,10 @@ layout: default
             count.save().then(function (countData) {
               updateValue(countData.value,countData.id)
             })
-        }
+          }
 
-      })
+        })
+      });
       /**
        * [updateValue 更新阅读数]
        * @param  {[type]} value [当前阅读数]
