@@ -153,6 +153,7 @@ layout: default
         var total=0,rowId  //当前文章总访问量和对应的记录ID
         query.contains('postId',pageId)   //设置query查询参数
         query.find().then(function(results) {//查询包含pageId的记录是否存在
+          debugger
           if(results.length){  //文章已存在
             updateValue(results[0].attributes.value,results[0].id)
           }else{  //不存在则新建相应的记录写入postId
