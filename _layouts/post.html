@@ -152,15 +152,19 @@ layout: default
         console.log(total+',id:'+rowId)
       }).then(function(){
         debugger
-        // 第一个参数是 className，第二个参数是 objectId
-        var todo = AV.Object.createWithoutData('Counter', rowId);
         var mount = total+1
         var postReaders = document.getElementById('postReaders')
             postReaders.innerHTML = mount
-        // 修改属性
-        todo.set('value', mount);
-        // 保存到云端
-        todo.save();
+            // 执行 CQL 语句实现更新一个 TodoFolder 对象
+           AV.Query.doCloudQuery('update Counter set value='+mount+' where objectId="'+rowId+'"')
+           .then(function (data) {
+             // data 中的 results 是本次查询返回的结果，AV.Object 实例列表
+             var results = data.results;
+             console.log(results)
+           }, function (error) {
+             // 异常处理
+             console.error(error);
+           });
       })
 
 
