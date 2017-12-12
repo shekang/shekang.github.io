@@ -149,9 +149,8 @@ layout: default
       });
       var query = new AV.Query('Counter');
       var total=0,rowId
-      query.contains('postId',pageId).then(function(page){
-            console.log('查询出是否存在page：'+page)
-      })
+      var page = query.contains('postId',pageId)  //查询包含pageId的记录是否存在
+      console.log(page)
       query.find().then(function(results) {
         total = results[0].attributes.value
         rowId = results[0].id
