@@ -158,7 +158,7 @@ layout: default
             var Counter = AV.Object.extend('Counter');
             var count = new Counter()
             count.set('value',mount)
-            count.set('id',rowId)
+            count.set('objectId',rowId)
             count.save().then(function(data){
               debugger
               console.log(data)
