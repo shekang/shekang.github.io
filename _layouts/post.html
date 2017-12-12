@@ -161,6 +161,7 @@ layout: default
             // 新建一个 ACL 实例
             var acl = new AV.ACL();
             acl.setWriteAccess(AV.User.current(),true);
+            acl.setPublicReadAccess(true)
             // // 将 ACL 实例赋予 Post 对象
             // count.setACL(acl);
             // 声明类型 （会返回对应表的构造函数）
