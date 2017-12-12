@@ -156,7 +156,7 @@ layout: default
         var postReaders = document.getElementById('postReaders')
             postReaders.innerHTML = mount
             // 执行 CQL 语句实现更新一个 TodoFolder 对象
-           AV.Query.doCloudQuery('update Counter set value='+mount+' where objectId="'+rowId+'"')
+           AV.Query.doCloudQuery('update Counter set value="'+mount+'" where objectId="'+rowId+'"')
            .then(function (data) {
              // data 中的 results 是本次查询返回的结果，AV.Object 实例列表
              var results = data.results;
