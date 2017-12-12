@@ -178,7 +178,7 @@ layout: default
         var postReaders = document.getElementById('postReaders')
             postReaders.innerHTML = mount
         // 第一个参数是 className，第二个参数是 objectId
-        var object = AV.Object.createWithoutData('Counter', rowId);
+        var object = AV.Object.createWithoutData('Counter', objectId);
         // 修改属性
         object.set('value',mount);
         // 保存到云端
