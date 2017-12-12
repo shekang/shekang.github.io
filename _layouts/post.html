@@ -28,7 +28,7 @@ layout: default
                     {% endcomment %}
                     {% comment %} if page.subtitle {% endcomment %}
                     <h2 class="subheading">{{ page.subtitle }}</h2>
-                    <div>字数: <span id="postLength" class="value">123123</span>&nbsp;&nbsp;&nbsp;阅读数: <span>3,2323次</span></div>
+                    <div>字数: <span id="postLength" class="value">123123</span>&nbsp;&nbsp;&nbsp;阅读数: <span id="postReaders">3,2323</span>次</div>
                     {% comment %} endif {% endcomment %}
                     <span class="meta">Posted by {% if page.author %}{{ page.author }}{% else %}{{ site.title }}{% endif %} on {{ page.date | date: "%B %-d, %Y" }}</span>
                 </div>
@@ -145,20 +145,22 @@ layout: default
         appKey: APP_KEY
       });
       var query = new AV.Query('Counter');
+      var total=0,rowId
       query.find().then(function(results) {
-        debugger
-        // results is an array of AV.Object.
-        console.log(results)
-      }, function(error) {
-        // error is an instance of AVError.
+        total = results[0].attributes.value
+        rowId = results[0].id
+        console.log(total+',id:'+rowId)
       }).then(function(){
-        var Counter = AV.Object.extend('Counter');
-        var testObject = new Counter();
-        testObject.save({
-          value: 1
-        }).then(function(object) {
-
-        })
+        debugger
+        // 第一个参数是 className，第二个参数是 objectId
+        var todo = AV.Object.createWithoutData('Counter', rowId);
+        var mount = total+1
+        var postReaders = document.getElementById('postReaders')
+            postReaders.innerHTML = mount
+        // 修改属性
+        todo.set('value', mount);
+        // 保存到云端
+        todo.save();
       })
 
 
