@@ -148,10 +148,10 @@ layout: default
         appKey: APP_KEY
       });
       var query = new AV.Query('Counter');
-      var total=0,rowId
-      var page = query.contains('postId',pageId)  //查询包含pageId的记录是否存在
-      console.log(page)
+      var total=0,rowId  //当前文章总访问量和对应的记录ID
+      query.contains('postId',pageId)  //查询包含pageId的记录是否存在
       query.find().then(function(results) {
+        console.log(results)
         total = results[0].attributes.value
         rowId = results[0].id
         console.log(total+',objectId:'+rowId)
