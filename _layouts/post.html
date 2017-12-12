@@ -139,13 +139,19 @@ layout: default
       var postLengthValue =  document.getElementById('postLength')
       var APP_ID = 'q8KLlCqYSAGihdpfaXiSfjqW-gzGzoHsz';
       var APP_KEY = 'ySMMLx2lIPRSsOpuCYXpbqxh';
+      var pageId  = '{{page.id}}'
       postLengthValue.innerHTML =postLength
+      console.log('Pageid is :'+pageId)
+      //初始化AV
       AV.init({
         appId: APP_ID,
         appKey: APP_KEY
       });
       var query = new AV.Query('Counter');
       var total=0,rowId
+      querty.contains('postId',pageId).then(function(page){
+            console.log('查询出是否存在page：'+page)
+      })
       query.find().then(function(results) {
         total = results[0].attributes.value
         rowId = results[0].id
