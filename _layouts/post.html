@@ -140,12 +140,14 @@ layout: default
       var postLengthValue =  document.getElementById('postLength')
       var APP_ID = 'q8KLlCqYSAGihdpfaXiSfjqW-gzGzoHsz';
       var APP_KEY = 'ySMMLx2lIPRSsOpuCYXpbqxh';
+      var MasterKey = 'RRaGMncFL64rziP35jFeSFeY';
       var pageId  = '{{page.id}}' //jekyll 提供的页面唯一ID
       postLengthValue.innerHTML =postLength
       //初始化AV
       AV.init({
         appId: APP_ID,
-        appKey: APP_KEY
+        appKey: APP_KEY,
+        masterKey:MasterKey
       });
       var query = new AV.Query('Counter');
       var total=0,rowId  //当前文章总访问量和对应的记录ID
