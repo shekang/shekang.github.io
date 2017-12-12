@@ -134,6 +134,7 @@ layout: default
 {% endif %}
 <!-- 字数和阅读量统计 -->
 <script>
+
   (function(window){
       var postLength = document.getElementsByClassName('post-container')[0].outerText.length
       var postLengthValue =  document.getElementById('postLength')
@@ -151,8 +152,7 @@ layout: default
       query.contains('postId',pageId)   //设置query查询参数
       query.find().then(function(results) {//查询包含pageId的记录是否存在
         if(results.length){  //文章已存在
-          total = results[0].attributes.value
-          rowId = results[0].id
+          updateValue(results[0].attributes.value,results[0].id)
           console.log(total+',objectId:'+rowId)
         }else{  //不存在则新建相应的记录写入postId
             // 声明类型 （会返回对应表的构造函数）
@@ -162,23 +162,27 @@ layout: default
             // 设置postId
             count.set('postId',pageId);
             count.save().then(function (countData) {
-              rowId = countData.id  //
-              total = results.value
-              console.log(countData);
-            });
+              updateValue(countData.value,countData.id)
+            })
         }
 
-      }).then(function(){
-        var mount = total+1
+      })
+      /**
+       * [updateValue 更新阅读数]
+       * @param  {[type]} value [当前阅读数]
+       * @return {[type]} objectId [记录ID]
+       */
+      function updateValue(value,objectId) {
+        var mount = value+1
         var postReaders = document.getElementById('postReaders')
             postReaders.innerHTML = mount
         // 第一个参数是 className，第二个参数是 objectId
-        var todo = AV.Object.createWithoutData('Counter', rowId);
+        var object = AV.Object.createWithoutData('Counter', rowId);
         // 修改属性
-        todo.set('value',mount);
+        object.set('value',mount);
         // 保存到云端
-        todo.save();
-      })
+        object.save();
+      }
   })()
 </script>
 
