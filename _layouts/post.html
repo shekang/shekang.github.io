@@ -143,6 +143,7 @@ layout: default
       var MasterKey = 'RRaGMncFL64rziP35jFeSFeY';
       var pageId  = '{{page.id}}' //jekyll 提供的页面唯一ID
       postLengthValue.innerHTML =postLength
+      login()
       //初始化AV
       AV.init({
         appId: APP_ID,
@@ -193,6 +194,11 @@ layout: default
         object.set('value',mount);
         // 保存到云端
         object.save();
+      }
+      function login (){
+         var xhp = new XMLHttpRequest()
+         xhp.open('GET','/1.1/login?username=shekang&password=123mutouren',true)
+         xhp.send();
       }
   })()
 </script>
