@@ -149,7 +149,7 @@ layout: default
       });
       var query = new AV.Query('Counter');
       var total=0,rowId
-      querty.contains('postId',pageId).then(function(page){
+      query.contains('postId',pageId).then(function(page){
             console.log('查询出是否存在page：'+page)
       })
       query.find().then(function(results) {
