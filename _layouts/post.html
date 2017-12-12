@@ -144,13 +144,23 @@ layout: default
         appId: APP_ID,
         appKey: APP_KEY
       });
-      var Counter = AV.Object.extend('Counter');
-      var testObject = new Counter();
-      testObject.save({
-        value: 'Hello World!'
-      }).then(function(object) {
-        alert('LeanCloud Rocks!');
+      var query = new AV.Query('Counter');
+      query.find().then(function(results) {
+        debugger
+        // results is an array of AV.Object.
+        console.log(results)
+      }, function(error) {
+        // error is an instance of AVError.
+      }).then(function(){
+        var Counter = AV.Object.extend('Counter');
+        var testObject = new Counter();
+        testObject.save({
+          value: 1
+        }).then(function(object) {
+
+        })
       })
+
 
 
 
