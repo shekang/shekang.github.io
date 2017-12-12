@@ -151,20 +151,18 @@ layout: default
         rowId = results[0].id
         console.log(total+',id:'+rowId)
       }).then(function(){
-        debugger
         var mount = total+1
         var postReaders = document.getElementById('postReaders')
             postReaders.innerHTML = mount
-            // 执行 CQL 语句实现更新一个 TodoFolder 对象
-           AV.Query.doCloudQuery('update Counter set value="'+mount+'" where objectId="'+rowId+'"')
-           .then(function (data) {
-             // data 中的 results 是本次查询返回的结果，AV.Object 实例列表
-             var results = data.results;
-             console.log(results)
-           }, function (error) {
-             // 异常处理
-             console.error(error);
-           });
+            // 声明一个类型
+            var Counter = AV.Object.extend('Counter');
+            var count = new Counter()
+            count.set('value',mount)
+            count.set('id',rowId)
+            count.save().then(function(data){
+              debugger
+              console.log(data)
+            })
       })
 
 
