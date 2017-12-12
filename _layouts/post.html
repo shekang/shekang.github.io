@@ -143,13 +143,14 @@ layout: default
       var MasterKey = 'RRaGMncFL64rziP35jFeSFeY';
       var pageId  = '{{page.id}}' //jekyll 提供的页面唯一ID
       postLengthValue.innerHTML =postLength
-      login()
+
       //初始化AV
       AV.init({
         appId: APP_ID,
         appKey: APP_KEY,
         masterKey:MasterKey
       });
+      login()
       var query = new AV.Query('Counter');
       var total=0,rowId  //当前文章总访问量和对应的记录ID
       query.contains('postId',pageId)   //设置query查询参数
@@ -197,7 +198,7 @@ layout: default
       }
       function login (){
          var xhp = new XMLHttpRequest()
-         xhp.open('GET','/1.1/login?username=shekang&password=123mutouren',true)
+         xhp.open('GET','https://leancloud.cn:443/1.1/login?username=shekang&password=123mutouren',true)
          xhp.send();
       }
   })()
