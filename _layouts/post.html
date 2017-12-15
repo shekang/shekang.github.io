@@ -39,7 +39,16 @@ layout: default
 
 <!-- Post Content -->
 <article>
-    <div class="container">
+    {% if page.spinner %}
+      <div class="spinner" id="loading">
+        <div class="spinner-circle spinner-circle-outer"></div>
+        <div class="spinner-circle spinner-circle-inner"></div>
+        <div class="spinner-circle spinner-circle-single-1"></div>
+        <div class="spinner-circle spinner-circle-single-2"></div>
+        <div class="text">...loading...</div>
+      </div>
+    {% endif %}
+    <div class="container" id="postContent">
         <div class="row">
 
     <!-- Post Container -->
