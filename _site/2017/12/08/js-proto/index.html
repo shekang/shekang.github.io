@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="佘康的博客 ">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.png">
+    <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+    <title>JS中的__proto__、prototype、constructor - 佘康的博客 | KerwinShe Blog</title>
+
+    <link rel="canonical" href="http://localhost:7666/2017/12/08/js-proto/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="http://cdn.staticfile.org/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Kerwin's Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/tags/">Tags</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+	<canvas style="position: absolute;" id="nokey" width="100%" height="100%">
+            Your Browser Don't Support Canvas, Please Download Chrome ^_^``
+    </canvas>
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-js-version.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/post-bg-js-version.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#javascript" title="javascript">javascript</a>
+                        
+                    </div>
+                    <h1>JS中的__proto__、prototype、constructor</h1>
+                    
+                    
+                    <h2 class="subheading"> "困惑了好久,今天梳理下"</h2>
+                    <div>字数: <span id="postLength" class="value">123123</span>&nbsp;&nbsp;&nbsp;阅读数: <span id="postReaders">0</span>次</div>
+                    
+                    <span class="meta">Posted by Kerwin She on December 8, 2017</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    
+    <div class="container" id="postContent">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+				<blockquote>
+  <p>本篇文章参考了这位<a href="https://www.cnblogs.com/xiaohuochai/p/5721552.html">大神</a>,哪里写的不好的请见谅并帮忙指出</p>
+</blockquote>
+
+<p>先附上一张比较经典的图片</p>
+
+<p><img src="http://images0.cnblogs.com/blog2015/683809/201508/201728184569708.jpg" alt="proto&amp;prototyp" /></p>
+
+<p>接下来简单的介绍下proto、prototype、constructor这三者的概念</p>
+
+<h2 id="__-proto-__">__ proto __</h2>
+<p>在js中所有对象都拥有属性<strong>__proto__</strong>，可称为<strong>隐式原型</strong>,<strong>一个对象的隐式原型指向构造该对象的构造函数的原型，这也保证了实例能够访问在构造函数原型中定义的属性和方法</strong></p>
+
+<h2 id="prototype">prototype</h2>
+<p>——原型属性（prototype）是<strong>方法（Function）对象特有的！</strong>
+——原型属性（prototype）是<strong>方法（Function）对象特有的！</strong>
+——原型属性（prototype）是<strong>方法（Function）对象特有的！</strong>
+这个属性是一个指针，指向一个对象，这个对象的用途就是包含所有实例共享的属性和方法（我们把这个对象叫做原型对象）。原型对象也有一个属性，叫做constructor，这个属性包含了一个指针，指回原构造函数。</p>
+
+<h2 id="constructor">constructor</h2>
+<p>这个属性是会出现在原型对象上,指向该原型对象对应的构造函数</p>
+
+<h2 id="总结">总结：</h2>
+<ul>
+  <li>proto : <strong>实例对象</strong>获取<strong>原型对象</strong>的</li>
+  <li>prototype:** 构造函数(所有函数)<strong>特有的获取</strong>原型对象**</li>
+  <li>constructor:<strong>原型对象</strong>中指向<strong>构造函数</strong>的</li>
+  <li>原型对象作为实例对象通过proto属性取得的原型对象最终都是<strong>Object.prototype</strong></li>
+  <li>所有函数作为实例对象通过proto属性取得的原型对象最终都是<strong>Function.prototype</strong>(也是个函数)</li>
+  <li>Function.prototype作为实例对象通过proto属性取得的原型对象最终都是Object.prototype</li>
+</ul>
+
+
+
+                <hr>
+
+
+
+
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2017/12/11/git-emojo/" data-toggle="tooltip" data-placement="top" title="git commit 时常用表情及含义">下一篇 &rarr;</a>
+                    </li>
+                    
+                </ul>
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+
+
+
+
+            </div>
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+        				
+                            
+        				
+                            
+                				<a href="/tags/#git" title="git" rel="2">
+                                    git
+                                </a>
+                            
+        				
+        			</div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+<!--  -->
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script src="http://cdn1.lncld.net/static/js/3.4.2/av-min.js"></script>
+<!-- 字数和阅读量统计 -->
+<script>
+
+  (function(window){
+      var postLength = document.getElementsByClassName('post-container')[0].outerText.length
+      var postLengthValue =  document.getElementById('postLength')
+      var APP_ID = 'q8KLlCqYSAGihdpfaXiSfjqW-gzGzoHsz';
+      var APP_KEY = 'ySMMLx2lIPRSsOpuCYXpbqxh';
+      var pageId  = '/2017/12/08/js-proto' //jekyll 提供的页面唯一ID
+      postLengthValue.innerHTML =postLength
+
+      //初始化AV
+      AV.init({
+        appId: APP_ID,
+        appKey: APP_KEY,
+      });
+      AV.User.logIn('shekang', '123mutouren').then(function (loginedUser) {
+        var query = new AV.Query('Counter');
+        var total=0,rowId  //当前文章总访问量和对应的记录ID
+        query.contains('postId',pageId)   //设置query查询参数
+        query.find().then(function(results) {//查询包含pageId的记录是否存在
+          if(results.length){  //文章已存在
+            updateValue(results[0].attributes.value,results[0].id)
+          }else{  //不存在则新建相应的记录写入postId
+            //因为表建立后的每条记录都默认不能没有写的权限的
+            // 新建一个 ACL 实例
+            var acl = new AV.ACL();
+            acl.setWriteAccess(AV.User.current(),true);
+            acl.setPublicReadAccess(true)
+            // // 将 ACL 实例赋予 Post 对象
+            // count.setACL(acl);
+            // 声明类型 （会返回对应表的构造函数）
+            var Counter = AV.Object.extend('Counter');
+            // 实例化对象
+
+            var count = new Counter();
+            count.setACL(acl);
+            // 设置postId
+            count.set('postId',pageId);
+            count.set('value',0);
+            count.save().then(function (countData) {
+              updateValue(countData.attributes.value,countData.id)
+            })
+          }
+
+        })
+      });
+      /**
+       * [updateValue 更新阅读数]
+       * @param  {[type]} value [当前阅读数]
+       * @return {[type]} objectId [记录ID]
+       */
+      function updateValue(value,objectId) {
+        var mount = value+1
+        var postReaders = document.getElementById('postReaders')
+            postReaders.innerHTML = mount
+        // 第一个参数是 className，第二个参数是 objectId
+        var object = AV.Object.createWithoutData('Counter', objectId);
+        // 修改属性
+        object.set('value',mount);
+        // 保存到云端
+        object.save();
+      }
+      function login (){
+         var xhp = new XMLHttpRequest()
+         xhp.open('GET','https://leancloud.cn:443/1.1/login?username=shekang&password=123mutouren',true)
+         xhp.send();
+      }
+  })()
+</script>
+<script>
+    var gitment = new Gitment({
+    // id: 'disqus_thread', // 可选。默认为 location.href
+    owner: 'shekang',
+    repo: 'blog_comment',
+    oauth: {
+      client_id: 'b36afd2e39e37f7c8364',
+      client_secret: '53f793bb775814f5cb1102be15c872a3e1283c86',
+    },
+    })
+    gitment.render('disqus_thread')
+</script>
+<!--  end -->
+
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+
+                    <!-- add Weibo, Zhihu by Hux, add target = "_blank" to <a> by Hux -->
+                    
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/shekang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="http://weibo.com/shekang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/shekang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/shekang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Kerwin's Blog 2017
+                    <!-- <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+                    </iframe> -->
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+<script src="https://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
+<!-- mouse effect -->
+<script src="/js/mouse-effect.js "></script>
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("http://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = 'e257f330db0577a464201aecbeb35bb8';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
