@@ -8,11 +8,11 @@ header-img: "img/post-bg-js-version.jpg"
 tags:
     - javascript
 ---
+
 > 本篇文章参考了这位[大神][1],哪里写的不好的请见谅并帮忙指出
 
 先附上一张比较经典的图片
-
-![proto&prototyp](http://images0.cnblogs.com/blog2015/683809/201508/201728184569708.jpg)
+![proto&&prototyp]({{site.url}}/img/post/proto.jpg)
 
 接下来简单的介绍下proto、prototype、constructor这三者的概念
 

@@ -1,0 +1,310 @@
+---
+layout:     post
+title:      "Canvas"
+date:       2017-12-27
+author:     "Kerwin She"
+tags:
+    - canvas
+---
+
+`<Canvas>`元素
+=========================
+ ```html
+  <canvas id="tutorial" width="150" height="150"></canvas>
+```
+`<canvas>` 标签只有两个属性—— `width`和`height` ,当没有设置宽度和高度的时候，canvas会初始化宽度为300像素和高度为150像素。`<canvas>` 元素需要结束标签(`</canvas>`)
+
+## 矩形
+* fillRect(x, y, width, height)
+  绘制一个填充的矩形
+* strokeRect(x, y, width, height)
+  绘制一个矩形的边框
+* clearRect(x, y, width, height)
+清除指定矩形区域，让清除部分完全透明。
+
+## 路径
+使用路径绘制图形需要一些额外的步骤。
+1. 首先，你需要创建路径起始点。
+2. 然后你使用画图命令去画出路径。
+3. 之后你把路径封闭。
+4. 一旦路径生成，你就能通过描边或填充路径区域来渲染图形。
+以下是所要用到的函数：
+* beginPath()
+   新建一条路径，生成之后，图形绘制命令被指向到路径上生成路径。
+* closePath()
+  闭合路径之后图形绘制命令又重新指向到上下文中。
+* stroke()
+  通过线条来绘制图形轮廓。
+* fill()
+  通过填充路径的内容区域生成实心的图形。
+
+```javascript
+  function draw() {
+    var canvas = document.getElementById('canvas');
+    if (canvas.getContext){
+    var ctx = canvas.getContext('2d');
+
+    // 填充三角形
+    ctx.beginPath();
+    ctx.moveTo(25,25);
+    ctx.lineTo(105,25);
+    ctx.lineTo(25,105);
+    ctx.fill();
+
+    // 描边三角形
+    ctx.beginPath();
+    ctx.moveTo(125,125);
+    ctx.lineTo(125,45);
+    ctx.lineTo(45,125);
+    ctx.closePath();
+    ctx.stroke();
+    }
+  }
+```
+>  注意 ： 因为路径使用填充（filled）时，路径自动闭合，使用描边（stroked）则不会闭合路径。
+
+## 移动触笔
+`moveTo(x, y)`
+将笔触移动到指定的坐标x以及y上,当canvas初始化或者`beginPath()`调用后，你通常会使用`moveTo()`函数设置起点。我们也能够使用`moveTo()`绘制一些不连续的路径。
+## 线
+`lineTo(x, y)`
+绘制一条从当前位置到指定x以及y位置的直线
+
+## 圆弧
+* `arc(x, y, radius, startAngle, endAngle, anticlockwise)` :
+画一个以（x,y）为圆心的以radius为半径的圆弧（圆），从startAngle开始到endAngle结束，按照anticlockwise给定的方向（默认为顺时针）来生成。
+* `arcTo(x1, y1, x2, y2, radius)` :
+根据给定的控制点和半径画一段圆弧，再以直线连接两个控制点。
+
+`x,y`为绘制圆弧所在圆上的圆心坐标。`radius`为半径。`startAngle`以及`endAngle`参数用弧度定义了开始以及结束的弧度。这些都是以x轴为基准。参数`anticlockwise`为一个布尔值。为`true`时，是逆时针方向，否则顺时针方向。
+
+> 注意：`arc()`函数中的角度单位是弧度，不是度数。角度与弧度的js表达式:radians=(Math.PI/180)\*degrees。
+
+## 二次贝塞尔曲线及三次贝塞尔曲线 :
+* `quadraticCurveTo(cp1x, cp1y, x, y)`
+绘制二次贝塞尔曲线，cp1x,cp1y为一个控制点，x,y为结束点。
+* `bezierCurveTo(cp1x, cp1y, cp2x,cp2y, x, y)` :
+绘制三次贝塞尔曲线，`cp1x,cp1y`为控制点一，`cp2x,cp2y`为控制点二，`x,y`为结束点。
+
+## 矩形
+`rect(x, y, width, height)` :
+绘制一个左上角坐标为`（x,y）`，宽高为`width`以及`height`的矩形。
+
+## Path2D 对象
+正如我们在前面例子中看到的，你可以使用一系列的路径和绘画命令来把对象“画”在画布上。为了简化代码和提高性能，`Path2D`对象已可以在较新版本的浏览器中使用，用来缓存或记录绘画命令，这样你将能快速地回顾路径。
+
+```javascript
+new Path2D();     // 空的Path对象
+new Path2D(path); // 克隆Path对象
+new Path2D(d);    // 从SVG建立Path对象
+```
+`Path2D.addPath(path [, transform])​` ：
+添加了一条路径到当前路径（可能添加了一个变换矩阵）。
+### Path2D示例
+在这个例子中，我们创造了一个矩形和一个圆。它们都被存为Path2D对象，后面再派上用场。随着新的Path2D API产生，几种方法也相应地被更新来使用Path2D对象而不是当前路径。在这里，带路径参数的stroke和fill可以把对象画在画布上。
+```javascript
+function draw() {
+  var canvas = document.getElementById('canvas');
+  if (canvas.getContext){
+    var ctx = canvas.getContext('2d');
+
+    var rectangle = new Path2D();
+    rectangle.rect(10, 10, 50, 50);
+
+    var circle = new Path2D();
+    circle.moveTo(125, 35);
+    circle.arc(100, 35, 25, 0, 2 * Math.PI);
+
+    ctx.stroke(rectangle);
+    ctx.fill(circle);
+  }
+}
+```
+### 使用 SVG paths
+新的Path2D API有另一个强大的特点，就是使用SVG path data来初始化canvas上的路径。这将使你获取路径时可以以SVG或canvas的方式来重用它们。
+
+## 色彩 Colors
+ * `fillStyle = color` :
+设置图形的填充颜色。
+* `strokeStyle = color` :
+ 设置图形轮廓的颜色。
+
+> 注意 ：特别注意画图时是以什么方式闭合图形得，用fill方式得就用fillStyle..
+
+##线性Line styles
+可以通过一系列属性来设置线的样式。
+- `lineWidth = value`：
+设置线条宽度。
+- `lineCap = type`：
+设置线条末端样式。butt，round 和 square默认是 butt
+- `lineJoin = type`:
+设定线条与线条间接合处的样式。 round, bevel 和 miter。默认是 miter。
+- miterLimit = value:
+限制当两条线相交时交接处最大长度；所谓交接处长度（斜接长度）是指线条交接处内角顶点到外角顶点的长度。
+- `getLineDash()`:
+返回一个包含当前虚线样式，长度为非负偶数的数组。
+- `setLineDash(segments)`:
+设置当前虚线样式。
+- `lineDashOffset = value`:
+设置虚线样式的起始偏移量。
+
+## 渐变 Gradients
+ - `createLinearGradient(x1, y1, x2, y2)`:
+`createLinearGradient` 方法接受 4 个参数，表示渐变的起点 (x1,y1) 与终点 (x2,y2)。
+- `createRadialGradient(x1, y1, r1, x2, y2, r2)`
+`createRadialGradient` 方法接受 6 个参数，前三个定义一个以 (x1,y1) 为原点，半径为 r1 的圆，后三个参数则定义另一个以 (x2,y2) 为原点，半径为 r2 的圆。
+创建出 `canvasGradient` 对象后，我们就可以用 `addColorStop` 方法给它上色了。
+
+`gradient.addColorStop(position, color)`
+`addColorStop `方法接受 2 个参数，`position` 参数必须是一个 0.0 与 1.0 之间的数值，表示渐变中颜色所在的相对位置。例如，0.5 表示颜色会出现在正中间。`color` 参数必须是一个有效的 CSS 颜色值（如 #FFF， rgba(0,0,0,1)，等等）。
+
+## 图案样式 Patterns
+`createPattern(image, type)` :
+该方法接受两个参数。Image 可以是一个 `Image `对象的引用，或者另一个 `canvas` 对象。Type 必须是下面的字符串值之一：repeat，repeat-x，repeat-y 和 no-repeat。
+
+## 阴影 Shadows
+- `shadowOffsetX = float`
+`shadowOffsetX` 和 `shadowOffsetY` 用来设定阴影在 X 和 Y 轴的延伸距离，它们是不受变换矩阵所影响的。负值表示阴影会往上或左延伸，正值则表示会往下或右延伸，它们默认都为 0。
+
+- `shadowOffsetY = float`
+`shadowOffsetX` 和 `shadowOffsetY` 用来设定阴影在 X 和 Y 轴的延伸距离，它们是不受变换矩阵所影响的。负值表示阴影会往上或左延伸，正值则表示会往下或右延伸，它们默认都为 0。
+
+- `shadowBlur = float`
+`shadowBlur` 用于设定阴影的模糊程度，其数值并不跟像素数量挂钩，也不受变换矩阵的影响，默认为 0。
+
+- `shadowColor = color`
+`shadowColor` 是标准的 CSS 颜色值，用于设定阴影颜色效果，默认是全透明的黑色。
+
+## 绘制文本
+canvas 提供了两种方法来渲染文本:
+- `fillText(text, x, y [, maxWidth])`:
+在指定的(x,y)位置填充指定的文本，绘制的最大宽度是可选的.
+- `strokeText(text, x, y [, maxWidth])`:
+在指定的(x,y)位置绘制文本边框，绘制的最大宽度是可选的.
+### 有样式的文本
+在上面的例子用我们已经使用了 `font `来使文本比默认尺寸大一些. 还有更多的属性可以让你改变canvas显示文本的方式：
+
+ - `font = value`:
+当前我们用来绘制文本的样式. 这个字符串使用和 CSS font 属性相同的语法. 默认的字体是 `10px sans-serif`。
+- `textAlign = value`:
+文本对齐选项. 可选的值包括：`start`, `end`, `left`, `right` or `center`. 默认值是 `start`。
+- `textBaseline = value`:
+基线对齐选项. 可选的值包括：`top`, `hanging`, `middle`, `alphabetic`, `ideographic`, `bottom`。默认值是 `alphabetic`
+- `direction = value` :
+文本方向。可能的值包括：`ltr`, `rtl`, `inherit`。默认值是 `inherit`。
+
+## Canvas图像
+引入图像到`canvas`里需要以下两步基本操作：
+
+1. 获得一个指向`HTMLImageElement`的对象或者另一个canvas元素的引用作为源，也可以通过提供一个URL的方式来使用图片（参见例子）
+2. 使用drawImage()函数将图片绘制到画布上
+
+### 获得需要绘制的图片
+canvas的API可以使用下面这些类型中的一种作为图片的源：
+
+1. `HTMLImageElement`:
+这些图片是由Image()函数构造出来的，或者任何的<img>元素
+2. `HTMLVideoElement`:
+用一个HTML的 `<video>`元素作为你的图片源，可以从视频中抓取当前帧作为一个图像
+3. `HTMLCanvasElement`:
+ 可以使用另一个 `<canvas>` 元素作为你的图片源。
+4. `ImageBitmap`:
+这是一个高性能的位图，可以低延迟地绘制，它可以从上述的所有源以及其它几种源中生成。
+这些源统一由 CanvasImageSource类型来引用
+
+有几种方式可以获取到我们需要在canvas上使用的图片。
+* 使用相同页面内的图片 :
+我们可以通过下列方法的一种来获得与canvas相同页面内的图片的引用
+ * `document.images`集合
+ * `document.getElementsByTagName()`方法
+ * 如果你知道你想使用的指定图片的ID，你可以用`document.getElementById()`获得这个图片
+* 使用其它域名下的图片 : 在 `HTMLImageElement`上使用`crossOrigin`属性，你可以请求加载其它域名上的图片。如果图片的服务器允许跨域访问这个图片，那么你可以使用这个图片而不污染canvas，否则，使用这个图片将会污染canvas。
+* 使用其它 canvas 元素 : 和引用页面内的图片类似地，用 `document.getElementsByTagName` 或 `document.getElementById` 方法来获取其它 canvas 元素。但你引入的应该是已经准备好的 canvas。
+* 由零开始创建图像 : 或者我们可以用脚本创建一个新的 `HTMLImageElement` 对象。要实现这个方法，我们可以使用很方便的`Image()`构造函数。
+ ``` javascript
+    var img = new Image();   // 创建一个<img>元素
+    img.src = 'myImage.png'; // 设置图片源地址
+ ```
+ 若调用 `drawImage` 时，图片没装载完，那什么都不会发生（在一些旧的浏览器中可能会抛出异常）。因此你应该用`load`事件来保证不会在加载完毕之前使用这个图片：
+
+ ```javascript
+  var img = new Image();   // 创建img元素
+  img.onload = function(){
+   // 执行drawImage语句
+  }
+  img.src = 'myImage.png'; // 设置图片源地址
+ ```
+ * 通过 data: url 方式嵌入图像
+ * 使用视频帧: 你还可以使用`<video>` 中的视频帧（即便视频是不可见的）。例如，如果你有一个ID为“myvideo”的`<video>` 元素，你可以这样做：
+ ```javascript
+ function getMyVideo() {
+   var canvas = document.getElementById('canvas');
+   if (canvas.getContext) {
+     var ctx = canvas.getContext('2d');
+
+     return document.getElementById('myvideo');
+   }
+ }
+ ```
+
+ ### 绘制图片
+ * `drawImage(image, x, y)`
+其中 `image` 是 image 或者 canvas 对象，x 和 y 是其在目标 canvas 里的起始坐标。
+* `drawImage(image, x, y, width, height)` :
+缩放 Scaling,这个方法多了2个参数：width 和 height，这两个参数用来控制 当像canvas画入时应该缩放的大小
+* `drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)`:切片 Slicing,第一个参数和其它的是相同的，都是一个图像或者另一个 canvas 的引用。其它8个参数最好是参照右边的图解，前4个是定义图像源的切片位置和大小，后4个则是定义切片的目标显示位置和大小。
+
+## 状态的保存和恢复 Saving and restoring state
+`save()restore()`
+save 和 restore 方法是用来保存和恢复 canvas 状态的，都没有参数。Canvas 的状态就是当前画面应用的所有样式和变形的一个快照。
+
+## 移动 Translating
+`translate(x, y)`
+`translate` 方法接受两个参数。x 是左右偏移量，y 是上下偏移量
+在做变形之前先保存状态是一个良好的习惯
+
+## 旋转 Rotating
+它用于以原点为中心旋转 canva
+`rotate(angle)`
+这个方法只接受一个参数：旋转的角度(angle)，它是顺时针方向的，以弧度为单位的值。
+旋转的中心点始终是 canvas 的原点，如果要改变它，我们需要用到 `translate` 方法
+
+## 缩放 Scaling
+`scale(x, y)`:
+`scale` 方法接受两个参数。x,y 分别是横轴和纵轴的缩放因子，它们都必须是正值。值比 1.0 小表示缩小，比 1.0 大则表示放大，值为 1.0 时什么效果都没有
+
+## 变形 Transforms
+最后一个方法允许对变形矩阵直接修改。
+`transform(m11, m12, m21, m22, dx, dy)`
+
+## globalCompositeOperation 遮盖
+我们不仅可以在已有图形后面再画新图形，还可以用来遮盖指定区域，清除画布中的某些部分（清除区域不仅限于矩形，像`clearRect()`方法做的那样 ）以及更多其他操作。
+
+## 裁切路径 Clipping paths
+裁切路径和普通的 canvas 图形差不多，不同的是它的作用是遮罩，用来隐藏不需要的部分。
+在 绘制图形 一章中，我只介绍了 `stroke` 和 `fill` 方法，这里介绍第三个方法 `clip。`
+`clip()` :
+Turns the path currently being built into the current clipping path.
+
+## 动画
+### 动画的基本步骤
+你可以通过以下的步骤来画出一帧:
+1. 清空 canvas :
+除非接下来要画的内容会完全充满 canvas （例如背景图），否则你需要清空所有。最简单的做法就是用 clearRect 方法。
+2. 保存 canvas 状态:
+如果你要改变一些会改变 canvas 状态的设置（样式，变形之类的），又要在每画一帧之时都是原始状态的话，你需要先保存一下。
+3. 绘制动画图形（animated shapes）:
+这一步才是重绘动画帧。
+4. 恢复 canvas 状态:
+如果已经保存了 canvas 的状态，可以先恢复它，然后重绘下一帧
+
+### 操控动画 Controlling an animation
+因此， 为了实现动画，我们需要一些可以定时执行重绘的方法。有两种方法可以实现这样的动画操控。首先可以通过 `setInterval` 和 `setTimeout` 方法来控制在设定的时间点上执行重绘。
+
+#### 有安排的更新画布 Scheduled updates
+`setInterval(function, delay)`:
+当设定好间隔时间后，function会定期执行。
+`setTimeout(function, delay)`:
+在设定好的时间之后执行函数
+`requestAnimationFrame(callback)`:
+告诉浏览器你希望执行一个动画，并在重绘之前，请求浏览器执行一个特定的函数来更新动画。

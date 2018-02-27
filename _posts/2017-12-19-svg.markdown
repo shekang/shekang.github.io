@@ -1,0 +1,280 @@
+---
+layout:     post
+title:      "初识SVG"
+date:       2017-12-19
+author:     "Kerwin She"
+tags:
+    - svg
+---
+
+>[MDN参考文档 ][2]
+
+初识SVG
+========
+SVG是XML语言的一种形式，有点类似XHTML，它可以用来绘制矢量图形。SVG可以通过定义必要的线和形状来创建一个图形，也可以修改已有的位图，或者将这两种方式结合起来创建图形。图形和其组成部分可以变形..一些概念性的地方[MDN文档][2]已经说得很明白了,这里只对一些需要注意的地方进行记录。
+先看个简单的例子：
+<a href="https://codepen.io/Senkongwww/pen/XVdbxv" target="\_bank">在CODE PEN上编辑</a>
+<iframe height='265' scrolling='no' title='Test SVG' src='//codepen.io/Senkongwww/embed/XVdbxv/?height=265&theme-id=0&default-tab=html,result&embed-version=2' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'>See the Pen <a href='https://codepen.io/Senkongwww/pen/XVdbxv/'>Test SVG</a> by Senkongwww (<a href='https://codepen.io/Senkongwww'>@Senkongwww</a>) on <a href='https://codepen.io'>CodePen</a>.
+</iframe>
+## 文件的基本属性
+* 最值得注意的一点是元素的渲染顺序。SVG文件全局有效的规则是“后来居上”，越后面的元素越可见
+* web上的svg文件可以直接在浏览器上展示，或者通过以下几种方法嵌入到HTML文件中：
+  * 如果HTML是XHTML并且声明类型为application/xhtml+xml，可以直接把SVG嵌入到XML源码中。
+  * 如果HTML是HTML5并且浏览器支持HTML5，同样可以直接嵌入SVG。然而为了符合HTML5标准，可能需要做一些语法调整。
+  * 可以通过 `object` 元素引用SVG文件：
+  ```html
+    <object data="image.svg" type="image/svg+xml" />
+  ```
+  * 类似的也可以使用 `iframe` 元素引用SVG文件：
+
+    ```html
+    <iframe src="image.svg"></iframe>
+    ```
+
+  * 理论上同样可以使用 `img` 元素，但是在低于4.0版本的Firefox 中不起作用。
+  * 最后SVG可以通过JavaScript动态创建并注入到HTML DOM中。 这样具有一个优点，可以对浏览器使用替代技术，在不能解析SVG的情况下，可以替换创建的内容。
+
+## 文件类型
+
+SVG文件有两种形式。
+- 普通SVG文件是包含SVG标记的简单文本文件。推荐使用 `.svg`（全部小写）作为此类文件的扩展名。
+- 对于SVG文件比较大的SVG标准允许gzip压缩文件。推荐使用 `.svgz`（全部小写）作为此类文件扩展名 。
+
+## 网格的定义
+坐标系统是：以页面的左上角为(0,0)坐标点，坐标以像素为单位，x轴正方向是向右，y轴正方向是向下。
+注意，这和你小时候所教的绘图方式是相反的。但是在HTML文档中，元素都是用这种方式定位的。
+![网格图片][3]
+
+示例：
+```html
+<rect x="0" y="0" width="100" height="100" />
+```
+> 定义一个矩形，即从左上角开始，向右延展100px，向下延展100px，形成一个100*100大的矩形。
+
+
+## 单位
+基本上，在 SVG 文档中的1个像素对应输出设备（比如显示屏）上的1个像素。但是这种情况是可以改变的，否则 SVG 的名字里也不至于会有“Scalable”（可缩放）这个词。如同CSS可以定义字体的绝对大小和相对大小，SVG也可以定义绝对大小（比如使用“pt”或“cm”标识维度）同时SVG也能使用相对大小，只需给出数字，不标明单位，输出时就会采用用户的单位。
+在没有进一步规范说明的情况下，1个用户单位等同于1个屏幕单位。要明确改变这种设定，SVG里有多种方法。我们从`svg`根元素开始：
+```html
+<svg width="100" height="100">
+```
+上面的元素定义了一个100*100px的SVG画布，这里1用户单位等同于1屏幕单位。
+
+```html
+<svg width="200" height="200" viewBox="0 0 100 100">
+```
+
+这里定义的画布尺寸是200\*200px。但是，viewBox属性定义了画布上可以显示的区域：从(0,0)点开始，100宽\*100高的区域。这个100\*100的区域，会放到200\*200的画布上显示。于是就形成了放大两倍的效果。
+
+## 基本形状
+> MDN上已经做了详细的[描述][4],这里就不多介绍
+
+## PATH路径
+> 这可能是SVG最常见的形状了,重点做个介绍
+
+`<path>`元素是SVG基本形状中最强大的一个，它不仅能创建其他基本形状，还能创建更多其他形状
+
+另外，path只需要设定很少的点，就可以创建平滑流畅的线条（比如曲线）。虽然polyline元素也能实现类似的效果，但是必须设置大量的点（点越密集，越接近连续，看起来越平滑流畅），并且这种做法不能够放大（放大后，点的离散更明显）。所以在绘制SVG时，对路径的良好理解很重要。虽然用XML或文本编辑器来编辑path元素不是很容易，但可以帮助我们理解path是如何工作的，所以，你就忍了吧。
+
+path元素的形状是通过属性[d][5]定义的，属性[d][5]的值是一个“命令+参数”的序列，我们将讲解这些可用的命令，并且展示一些示例
+
+每一个命令都用一个关键字母来表示，比如，字母“M”表示的是“Move to”命令，当解析器读到这个命令时，它就知道你是打算移动到某个点。跟在命令字母后面的，是你需要移动到的那个点的x和y轴坐标。比如移动到(10,10)这个点的命令，应该写成“M 10 10”。这一段字符结束后，解析器就会去读下一段命令。每一个命令都有两种表示方式，一种是用**大写字母**，表示采用绝对定位。另一种是用**小写字母**，表示采用相对定位（例如：从上一个点开始，向上移动10px，向左移动7px）。
+
+因为`属性d`采用的是用户坐标系统，所以**不需标明单位**。在后面的教程中，我们会学到如何让变换路径，以满足更多需求。
+
+### 移动画笔命令
+“Move to”命令，M，前面已经提到过，它需要两个参数，分别是需要移动到的点的x轴和y轴的坐标，前面介绍了，每一个命令都有两种表示方式，一种是用大写字母，表示采用绝对定位。另一种是用小写字母，表示采用相对定位（例如：从上一个点开始，向上移动10px，向左移动7px）。
+```html
+ M x y
+```
+或
+```html
+ m dx dy
+```
+例子：
+```html
+<?xml version="1.0" standalone="no"?>
+
+<svg width="200px" height="200px" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+  <path d="M10 10"/>
+
+  <!-- Points  因为画笔话不出现，这里只为了标识画笔的位置-->
+  <circle cx="10" cy="10" r="2" fill="red"/>
+
+</svg>
+```
+> 注意： 移动命令是不会画出线的，好比现实中你作画时移动的画笔
+
+### 直线命令
+“Line to”命令，`L`，`L`需要两个参数，分别是一个点的x轴和y轴坐标，`L`命令将会在当前位置和新位置（L前面画笔所在的点）之间画一条线段。
+```html
+L x y (or l dx dy)
+```
+另外还有两个简写命令，用来绘制平行线和垂直线。`H`，绘制平行线。`V`，绘制垂直线。这两个命令都只带一个参数，标明在x轴或y轴移动到的位置，因为它们都只在坐标轴的一个方向上移动。
+```html
+H x (or h dx)
+ V y (or v dy)
+```
+例子
+```html
+ <?xml version="1.0" standalone="no"?>
+
+  <svg width="100px" height="100px" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+  <path d="M10 10 H 90 V 90 H 10 L 10 10"/>
+
+  <!-- Points -->
+  <circle cx="10" cy="10" r="2" fill="red"/>
+  <circle cx="90" cy="90" r="2" fill="red"/>
+  <circle cx="90" cy="10" r="2" fill="red"/>
+  <circle cx="10" cy="90" r="2" fill="red"/>
+  </svg>
+```
+### 闭合指令Z
+`Z`命令会从当前点画一条直线到路径的起点，尽管我们不总是需要闭合路径，但是它还是经常被放到路径的最后。另外，`Z`命令不用区分大小写。
+
+### 曲线命令
+绘制平滑曲线的命令有三个，其中两个用来绘制[贝塞尔曲线][6]，另外一个用来绘制弧形或者说是圆的一部分
+贝塞尔曲线的类型有很多，但是在path元素里，只存在两种贝塞尔曲线：三次贝塞尔曲线C，和二次贝塞尔曲线Q。
+### 贝塞尔曲线
+我们从稍微复杂一点的**三次贝塞尔曲线**C入手，三次贝塞尔曲线需要定义一个点和两个控制点，所以用C命令创建三次贝塞尔曲线，需要设置三组坐标参数,三次贝塞尔曲线命令 :
+```html
+  C x1 y1, x2 y2, x y (or c dx1 dy1, dx2 dy2, dx dy)
+```
+你可以将若干个贝塞尔曲线连起来，从而创建出一条很长的平滑曲线。通常情况下，一个点某一侧的控制点是它另一侧的控制点的对称（以保持斜率不变）。这样，你可以使用一个简写的贝塞尔曲线命令S
+
+```html
+  S x2 y2, x y (or s dx2 dy2, dx dy)
+```
+S命令可以用来创建与之前那些曲线一样的贝塞尔曲线，但是，如果S命令跟在一个C命令或者另一个S命令的后面，它的第一个控制点，就会被假设成前一个控制点的对称点。如果S命令单独使用，前面没有C命令或者另一个S命令，那么它的两个控制点就会被假设为同一个点。
+
+**二次贝塞尔曲线Q**
+它比三次贝塞尔曲线简单，只需要一个控制点，用来确定起点和终点的曲线斜率。因此它需要两组参数，控制点和终点坐标
+
+```html
+  Q x1 y1, x y (or q dx1 dy1, dx dy)
+```
+就像三次贝塞尔曲线有一个S命令，二次贝塞尔曲线有一个差不多的T命令，可以通过更简短的参数，延长二次贝塞尔曲线。
+
+```html
+  T x y (or t dx dy)
+```
+
+### 弧形
+弧形命令`A`是另一个创建SVG曲线的命令
+```html
+  A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+  a rx ry x-axis-rotation large-arc-flag sweep-flag dx dy
+```
+* 前两个参数分别是x轴半径和y轴半径
+* 第三个参数表示弧形的旋转情况
+* large-arc-flag（角度大小）:large-arc-flag决定弧线是大于还是小于180度，0表示小角度弧，1表示大角度弧。
+* sweep-flag（弧线方向）:sweep-flag表示弧线的方向，0表示从起点到终点沿逆时针画弧，1表示从起点到终点沿顺时针画弧。
+* 最后两个参数是指定弧形的终点
+例子：
+```html
+  <?xml version="1.0" standalone="no"?>
+  <svg width="320px" height="320px" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10 315
+           L 110 215
+           A 30 50 0 0 1 162.55 162.45
+           L 172.55 152.45
+           A 30 50 -45 0 1 215.1 109.9
+           L 315 10" stroke="black" fill="green" stroke-width="2" fill-opacity="0.5"/>
+  </svg>
+```
+
+## 上色
+
+`fill`属性设置对象内部的颜色，`stroke`属性设置绘制对象的线条的颜色。
+> 此外，在SVG中你可以分别定义填充色和边框色的不透明度，属性`fill-opacity`控制填充色的不透明度，属性`stroke-opacity`控制描边的不透明度。
+
+## 描边
+* `stroke-width`属性定义了描边的宽度。
+* `stroke-linecap` 控制边框终点的形状。
+  - `butt` : 用直边结束线段，它是常规做法，线段边界90度垂直于描边的方向、贯穿它的终点。
+  - `square`:的效果差不多，但是会稍微超出实际路径的范围，超出的大小由stroke-width控制。
+  - `round`:表示边框的终点是圆角，圆角的半径也是由stroke-width控制的
+* `stroke-linejoin`用来控制两条描边线段之间，用什么方式连接
+  - `miter`是默认值，表示用方形画笔在连接处形成尖角
+  - `round`表示用圆角连接，实现平滑效果
+  - `bevel`连接处会形成一个斜接
+* `stroke-dasharray`是一组用逗号分割的数字组成的数列,例子:
+> 注意，和path不一样，这里的数字必须用逗号分割（空格会被忽略）。每一组数字，第一个用来表示填色区域的长度，第二个用来表示非填色区域的长度。
+
+```html
+    <?xml version="1.0" standalone="no"?>
+    <svg width="200" height="150" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <path d="M 10 75 Q 50 10 100 75 T 190 75" stroke="black"
+     stroke-linecap="round" stroke-dasharray="5,10,5" fill="none"/>
+    <path d="M 10 75 L 190 75" stroke="red"
+     stroke-linecap="round" stroke-width="1" stroke-dasharray="5,5" fill="none"/>
+    </svg>
+```
+第二个路径会先做5个像素单位的填色，紧接着是5个空白单位，然后又是5个单位的填色。如果你想要更复杂的虚线模式，你可以定义更多的数字。第一个例子指定了3个数字，这种情况下，数字会循环两次，形成一个偶数的虚线模式（奇数个循环两次变偶数个）。所以该路径首先渲染5个填色单位，10个空白单位，5个填色单位，然后回头以这3个数字做一次循环，但是这次是创建5个空白单位，10个填色单位，5个空白单位。通过这两次循环得到偶数模式，并将这个偶数模式不断重复。
+
+另外还有一些关于填充和边框的属性，包括`fill-rule`，用于定义如何给图形重叠的区域上色；`stroke-miterlimit`，定义什么情况下绘制或不绘制边框连接的`miter`效果；还有`stroke-dashoffset`，定义虚线开始的位置。
+
+## 使用CSS
+除了定义对象的属性外，你也可以通过CSS来样式化填充和描边。语法和在html里使用CSS一样，只不过你要把background-color、border改成fill和stroke。注意，不是所有的属性都能用CSS来设置。上色和填充的部分一般是可以用CSS来设置的，比如fill，stroke，stroke-dasharray等，但是不包括下面会提到的渐变和图案等功能。另外，width、height，以及路径的命令等等，都不能用css设置。判断它们能不能用CSS设置还是比较容易的。
+
+### `<defs>`
+就像在html里这样的`<style>`一般放在`<head>`里，在svg里`<style>`则放在`<defs>`标签里。`<defs>`表示定义，这里面可以定义一些不会在SVG图形中出现、但是可以被其他元素使用的元素。
+
+```html
+  <?xml version="1.0" standalone="no"?>
+  <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs>
+    <style type="text/css"><!\[CDATA\[
+       #MyRect {
+         stroke: black;
+         fill: red;
+       }
+    ]]></style>
+  </defs>
+  <rect x="10" height="180" y="10" width="180" id="MyRect"/>
+  </svg>  
+
+```
+
+## 渐变
+
+有两种类型的渐变：**线性渐变**和**径向渐变**。你`必须`给渐变内容指定一个id属性，否则文档内的其他元素就不能引用它。为了让渐变能被重复使用，渐变内容需要定义在**`<defs>`** 标签内部，而不是定义在形状上面。
+
+### 线性渐变
+线性渐变沿着直线改变颜色，要插入一个线性渐变，你需要在SVG文件的`defs元素`内部，创建一个`<linearGradient>` 节点
+
+```html
+  <svg width="120" height="240" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="Gradient1">
+          <stop class="stop1" offset="0%"/>
+          <stop class="stop2" offset="50%"/>
+          <stop class="stop3" offset="100%"/>
+        </linearGradient>
+        <linearGradient id="Gradient2" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="red"/>
+          <stop offset="50%" stop-color="black" stop-opacity="0"/>
+          <stop offset="100%" stop-color="blue"/>
+        </linearGradient>
+        <style type="text/css"><![CDATA[
+          #rect1 { fill: url(#Gradient1); }
+          .stop1 { stop-color: red; }
+          .stop2 { stop-color: black; stop-opacity: 0; }
+          .stop3 { stop-color: blue; }
+        ]]></style>
+    </defs>
+
+    <rect id="rect1" x="10" y="10" rx="15" ry="15" width="100" height="100"/>
+    <rect x="10" y="120" rx="15" ry="15" width="100" height="100" fill="url(#Gradient2)"/>
+
+  </svg>
+```  
+
+[1]:https://caniuse.com/#search=svg
+[2]:https://developer.mozilla.org/zh-CN/docs/Web/SVG
+[3]:https://mdn.mozillademos.org/files/224/Canvas_default_grid.png
+[4]:https://developer.mozilla.org/zh-CN/docs/Web/SVG/Tutorial/Basic_Shapes
+[5]:https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/d
+[6]:https://en.wikipedia.org/wiki/B%C3%A9zier_curve
