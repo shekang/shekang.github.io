@@ -1,7 +1,7 @@
 # Site settings
 title: Kerwin's Blog
 SEOTitle: 佘康的博客 | KerwinShe Blog
-header-img: img/index_bg.jpg
+header-img: img/index-bg.jpg
 email: m18290048583@gmail.com
 description: "佘康的博客 "
 keyword: ""
@@ -12,7 +12,7 @@ baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
 
 # SNS settings
 RSS: true
-weibo_username:     shekang
+weibo_username:     
 zhihu_username:     shekang
 github_username:    shekang
 #twitter_username:  shekang
