@@ -229,26 +229,46 @@ window.onmessage = function(e) {
 JSONP是服务器与客户端跨源通信的常用方法。最大特点就是简单适用，老式浏览器全部支持，服务器改造非常小。
 它的基本思想是，网页通过添加一个`<script>`元素，向服务器请求JSON数据，这种做法不受同源政策限制；服务器收到请求后，将数据放在一个指定名字的回调函数里传回来。
 首先，网页动态插入`<script>`元素，由它向跨源网址发出请求。
+例子：
+
+**客服端**
 ```javascript
 function addScriptTag(src) {
-  var script = document.createElement('script');
-  script.setAttribute("type","text/javascript");
-  script.src = src;
-  document.body.appendChild(script);
+    var script = document.createElement('script');
+    script.setAttribute("type","text/javascript");
+    script.src = src;
+    document.body.appendChild(script);
 }
-
 window.onload = function () {
-  addScriptTag('http://example.com/ip?callback=foo');
+    addScriptTag('http://localhost:3000/test?callback=foo');
 }
-
 function foo(data) {
   console.log('Your public IP address is: ' + data.ip);
 };
 ```
-上面代码通过动态添加`<script>`元素，向服务器`example.com`发出请求。注意，该请求的查询字符串有一个`callback`参数，用来指定回调函数的名字，这对于JSONP是必需的。
+上面代码通过动态添加`<script>`元素，向服务器`http://localhost:3000`发出请求。注意，该请求的查询字符串有一个`callback`参数，用来指定回调函数的名字，这对于JSONP是必需的。
 
 服务器收到这个请求以后，会将数据放在回调函数的参数位置返回。
 
+**JavaScript服务端**
+```javascript
+var express = require('express');
+var app = express();
+
+app.get('/test', function (req, res) {
+  var cbFunction = req.query.callback
+  res.send(`${cbFunction}({"ip":"110.110.110.110"})`);
+});
+
+var server = app.listen(3000, function () {
+  var host = server.address().address;
+  var port = server.address().port;
+
+  console.log('Example app listening at http://%s:%s', host, port);
+});
+
+```
+上面代码通过[express][3]做的简单后台,当请求接口时，后端拿到`callback`参数然后将其与要返回的数据组合成字符串的形式返回给客户端。
 由于`<script>`元素请求的脚本，直接作为代码运行。这时，只要浏览器定义了`foo`函数，该函数就会立即调用。作为参数的JSON数据被视为JavaScript对象，而不是字符串，因此避免了使用`JSON.parse`的步骤。
 
 ## WebSocket
@@ -455,3 +475,4 @@ JSONP只支持`GET`请求，CORS支持所有类型的HTTP请求。JSONP的优势
 
 [1]:https://en.wikipedia.org/wiki/WebSocket
 [2]:http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html
+[3]:http://www.expressjs.com.cn/
